@@ -12,11 +12,11 @@ export class RedisClient {
       RedisClient.instance = new Redis(config.redis.url);
       
       RedisClient.instance.on('connect', () => {
-        logger.info('✅ Redis connected successfully');
+        logger.info('Redis connected successfully');
       });
 
       RedisClient.instance.on('error', (error) => {
-        logger.error('❌ Redis connection error:', error);
+        logger.error('Redis connection error:', error);
       });
     }
     return RedisClient.instance;

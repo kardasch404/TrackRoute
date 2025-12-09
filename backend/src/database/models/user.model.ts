@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { IUser } from '../../modules/auth/entities/user.entity';
 import { UserRole } from '../../shared/constants/roles.constant';
@@ -31,11 +31,16 @@ const userSchema = new Schema<IUserDocument>(
       required: true,
       trim: true,
     },
+    phone: {
+      type: String,
+      trim: true,
+    },
     role: {
       type: String,
       enum: Object.values(UserRole),
       default: UserRole.DRIVER,
     },
+    permissions: [{ type: String }],
     isActive: {
       type: Boolean,
       default: true,
