@@ -5,6 +5,7 @@ import { UserRepository } from './repositories/user.repository';
 import { validate } from '../../shared/middleware/validation.middleware';
 import { registerSchema } from './validators/register.validator';
 import { loginSchema } from './validators/login.validator';
+import { refreshTokenSchema } from './validators/refresh-token.validator';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ const authController = new AuthController(authService);
 
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
+router.post('/refresh', validate(refreshTokenSchema), authController.refreshToken);
 
 export default router;
