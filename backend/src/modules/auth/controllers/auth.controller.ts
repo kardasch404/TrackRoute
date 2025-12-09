@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import { IAuthService } from '../services/auth.service';
+import { ForbiddenException } from '../../../shared/exceptions/forbidden.exception';
+import { UserRole } from '../../../shared/constants/roles.constant';
 
 export class AuthController {
   constructor(private readonly authService: IAuthService) {}
 
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if (req.user?.role !== UserRole.ADMIN) {
+        return next(new ForbiddenException('Only admins can create users'));
+      }
       const result = await this.authService.register(req.body);
-      res.status(201).json({ success: true, data: result });
+      res.status(201).json({ success: true, message: 'User created successfully', data: result });
     } catch (error) {
       next(error);
     }
@@ -16,7 +21,27 @@ export class AuthController {
   login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.authService.login(req.body);
-      res.status(200).json({ success: true, data: result });
+      res.status(200).json({ success: true, message: 'Login successful', data: result });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  logout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req as any).user.userId;
+      await this.authService.logout(userId);
+      res.status(200).json({ success: true, message: 'Logout successful' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { refreshToken } = req.body;
+      const result = await this.authService.refreshToken(refreshToken);
+      res.status(200).json({ success: true, message: 'Token refreshed', data: result });
     } catch (error) {
       next(error);
     }
