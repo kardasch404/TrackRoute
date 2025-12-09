@@ -3,6 +3,7 @@ import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { UserRepository } from './repositories/user.repository';
 import { validate } from '../../shared/middleware/validation.middleware';
+import { authenticate } from '../../shared/middleware/auth.middleware';
 import { registerSchema } from './validators/register.validator';
 import { loginSchema } from './validators/login.validator';
 import { refreshTokenSchema } from './validators/refresh-token.validator';
@@ -16,6 +17,7 @@ const authController = new AuthController(authService);
 
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
+router.post('/logout', authenticate, authController.logout);
 router.post('/refresh', validate(refreshTokenSchema), authController.refreshToken);
 
 export default router;
