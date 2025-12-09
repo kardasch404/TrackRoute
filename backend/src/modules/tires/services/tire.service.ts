@@ -7,7 +7,7 @@ export class TireService {
   constructor(private readonly tireRepository: ITireRepository) {}
 
   async createTire(data: CreateTireDto) {
-    return this.tireRepository.create(data);
+    return this.tireRepository.create(data as any);
   }
 
   async getTireById(id: string) {
