@@ -23,12 +23,10 @@ export const rbacMiddleware = (requiredPermissions: Permission[]) => {
       return next(new ForbiddenException('User not authenticated'));
     }
 
-    // Admin has all permissions by default
     if (req.user.role === UserRole.ADMIN) {
       return next();
     }
 
-    // Check if user has required permissions
     const userPermissions = req.user.permissions || [];
     const hasPermission = requiredPermissions.every((permission) =>
       userPermissions.includes(permission)
