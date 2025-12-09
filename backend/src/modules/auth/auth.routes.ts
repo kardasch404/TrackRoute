@@ -3,8 +3,8 @@ import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { UserRepository } from './repositories/user.repository';
 import { validate } from '../../shared/middleware/validation.middleware';
-import { registerSchema } from './dto/register.dto';
-import { loginSchema } from './dto/login.dto';
+import { registerSchema } from './validators/register.validator';
+import { loginSchema } from './validators/login.validator';
 
 const router = Router();
 
