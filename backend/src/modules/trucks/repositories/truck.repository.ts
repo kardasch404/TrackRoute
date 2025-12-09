@@ -6,6 +6,8 @@ import { IRepository } from '../../../shared/types/common.types';
 export interface ITruckRepository extends IRepository<ITruckDocument> {
   findByRegistration(registration: string): Promise<ITruckDocument | null>;
   findByStatus(status: string): Promise<ITruckDocument[]>;
+  findWithPagination(page: number, limit: number, filters?: any): Promise<{ data: ITruckDocument[]; total: number }>;
+  searchByRegistration(query: string): Promise<ITruckDocument[]>;
 }
 
 export class TruckRepository implements ITruckRepository {
@@ -27,6 +29,20 @@ export class TruckRepository implements ITruckRepository {
 
   async findAll(): Promise<ITruckDocument[]> {
     return TruckModel.find().sort({ createdAt: -1 });
+  }
+
+  async findWithPagination(page: number, limit: number, filters: any = {}): Promise<{ data: ITruckDocument[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const query = filters.status ? { status: filters.status } : {};
+    const [data, total] = await Promise.all([
+      TruckModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      TruckModel.countDocuments(query),
+    ]);
+    return { data, total };
+  }
+
+  async searchByRegistration(query: string): Promise<ITruckDocument[]> {
+    return TruckModel.find({ registration: { $regex: query, $options: 'i' } }).limit(10);
   }
 
   async update(id: string, data: UpdateTruckDto): Promise<ITruckDocument | null> {

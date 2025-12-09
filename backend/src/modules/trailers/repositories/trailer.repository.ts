@@ -6,6 +6,8 @@ import { IRepository } from '../../../shared/types/common.types';
 export interface ITrailerRepository extends IRepository<ITrailerDocument> {
   findByRegistration(registration: string): Promise<ITrailerDocument | null>;
   findByStatus(status: string): Promise<ITrailerDocument[]>;
+  findAvailable(): Promise<ITrailerDocument[]>;
+  findWithPagination(page: number, limit: number, filters?: any): Promise<{ data: ITrailerDocument[]; total: number }>;
 }
 
 export class TrailerRepository implements ITrailerRepository {
@@ -27,6 +29,20 @@ export class TrailerRepository implements ITrailerRepository {
 
   async findAll(): Promise<ITrailerDocument[]> {
     return TrailerModel.find().sort({ createdAt: -1 });
+  }
+
+  async findAvailable(): Promise<ITrailerDocument[]> {
+    return TrailerModel.find({ status: 'AVAILABLE' });
+  }
+
+  async findWithPagination(page: number, limit: number, filters: any = {}): Promise<{ data: ITrailerDocument[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const query = filters.status ? { status: filters.status } : {};
+    const [data, total] = await Promise.all([
+      TrailerModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      TrailerModel.countDocuments(query),
+    ]);
+    return { data, total };
   }
 
   async update(id: string, data: UpdateTrailerDto): Promise<ITrailerDocument | null> {

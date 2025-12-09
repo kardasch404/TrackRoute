@@ -6,6 +6,8 @@ import { IRepository } from '../../../shared/types/common.types';
 export interface ITireRepository extends IRepository<ITireDocument> {
   findByVehicle(vehicleId: string): Promise<ITireDocument[]>;
   findByStatus(status: string): Promise<ITireDocument[]>;
+  findNeedingReplacement(): Promise<ITireDocument[]>;
+  findWithPagination(page: number, limit: number, filters?: any): Promise<{ data: ITireDocument[]; total: number }>;
 }
 
 export class TireRepository implements ITireRepository {
@@ -27,6 +29,24 @@ export class TireRepository implements ITireRepository {
 
   async findAll(): Promise<ITireDocument[]> {
     return TireModel.find().populate('vehicle').sort({ createdAt: -1 });
+  }
+
+  async findNeedingReplacement(): Promise<ITireDocument[]> {
+    return TireModel.find({
+      $expr: { $gte: ['$currentKm', { $multiply: ['$maxLifeKm', 0.9] }] },
+    }).populate('vehicle');
+  }
+
+  async findWithPagination(page: number, limit: number, filters: any = {}): Promise<{ data: ITireDocument[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const query: any = {};
+    if (filters.status) query.status = filters.status;
+    if (filters.vehicleId) query.vehicle = filters.vehicleId;
+    const [data, total] = await Promise.all([
+      TireModel.find(query).populate('vehicle').sort({ createdAt: -1 }).skip(skip).limit(limit),
+      TireModel.countDocuments(query),
+    ]);
+    return { data, total };
   }
 
   async update(id: string, data: UpdateTireDto): Promise<ITireDocument | null> {
