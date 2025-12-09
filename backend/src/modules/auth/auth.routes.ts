@@ -15,9 +15,11 @@ const userRepository = new UserRepository();
 const authService = new AuthService(userRepository);
 const authController = new AuthController(authService);
 
-router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.post('/logout', authenticate, authController.logout);
 router.post('/refresh', validate(refreshTokenSchema), authController.refreshToken);
+
+// Admin only - create driver
+router.post('/users', authenticate, validate(registerSchema), authController.register);
 
 export default router;

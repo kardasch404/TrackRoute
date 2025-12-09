@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import { IAuthService } from '../services/auth.service';
+import { ForbiddenException } from '../../../shared/exceptions/forbidden.exception';
+import { UserRole } from '../../../shared/constants/roles.constant';
 
 export class AuthController {
   constructor(private readonly authService: IAuthService) {}
 
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if (req.user?.role !== UserRole.ADMIN) {
+        return next(new ForbiddenException('Only admins can create users'));
+      }
       const result = await this.authService.register(req.body);
-      res.status(201).json({ success: true, message: 'User registered successfully', data: result });
+      res.status(201).json({ success: true, message: 'User created successfully', data: result });
     } catch (error) {
       next(error);
     }

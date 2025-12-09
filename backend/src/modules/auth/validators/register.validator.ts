@@ -7,5 +7,5 @@ export const registerSchema = Joi.object<RegisterDto>({
   password: Joi.string().min(6).required(),
   firstName: Joi.string().min(2).required(),
   lastName: Joi.string().min(2).required(),
-  role: Joi.string().valid(...Object.values(UserRole)).optional(),
+  role: Joi.string().valid(...Object.values(UserRole)).default(UserRole.DRIVER),
 });

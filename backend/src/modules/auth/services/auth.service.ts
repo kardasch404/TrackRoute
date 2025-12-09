@@ -27,11 +27,12 @@ export class AuthService implements IAuthService {
     }
 
     const user = await this.userRepository.create(data);
-    const payload = { userId: user._id.toString(), role: user.role };
+    const userId = user._id!.toString();
+    const payload = { userId, role: user.role };
     const accessToken = JwtUtil.generateAccessToken(payload);
     const refreshToken = JwtUtil.generateRefreshToken(payload);
 
-    await this.sessionService.createSession(user._id.toString(), refreshToken);
+    await this.sessionService.createSession(userId, refreshToken);
 
     return {
       user: {
@@ -57,11 +58,12 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { userId: user._id.toString(), role: user.role };
+    const userId = user._id!.toString();
+    const payload = { userId, role: user.role };
     const accessToken = JwtUtil.generateAccessToken(payload);
     const refreshToken = JwtUtil.generateRefreshToken(payload);
 
-    await this.sessionService.createSession(user._id.toString(), refreshToken);
+    await this.sessionService.createSession(userId, refreshToken);
 
     return {
       user: {
@@ -93,7 +95,7 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    const newPayload = { userId: user._id.toString(), role: user.role };
+    const newPayload = { userId: user._id!.toString(), role: user.role };
     const accessToken = JwtUtil.generateAccessToken(newPayload);
 
     return { accessToken };
