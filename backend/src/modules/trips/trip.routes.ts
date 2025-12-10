@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { TripController } from './controllers/trip.controller';
 import { authMiddleware } from '../../shared/middleware/auth.middleware';
 import { rbacMiddleware } from '../../shared/middleware/rbac.middleware';
-import { validationMiddleware } from '../../shared/middleware/validation.middleware';
+import { validate } from '../../shared/middleware/validation.middleware';
 import { Permission } from '../../shared/constants/permissions.constant';
 import { createTripSchema } from './validators/create-trip.validator';
 import { updateStatusSchema } from './validators/update-status.validator';
@@ -10,13 +10,63 @@ import { updateStatusSchema } from './validators/update-status.validator';
 const router = Router();
 const tripController = new TripController();
 
+// All routes require authentication
 router.use(authMiddleware);
 
-router.post('/', rbacMiddleware([Permission.TRIP_CREATE]), validationMiddleware(createTripSchema), tripController.createTrip);
-router.get('/', rbacMiddleware([Permission.TRIP_READ]), tripController.getAllTrips);
-router.get('/:id', rbacMiddleware([Permission.TRIP_READ]), tripController.getTripById);
-router.put('/:id', rbacMiddleware([Permission.TRIP_UPDATE]), tripController.updateTrip);
-router.patch('/:id/status', rbacMiddleware([Permission.TRIP_UPDATE]), validationMiddleware(updateStatusSchema), tripController.updateStatus);
-router.delete('/:id', rbacMiddleware([Permission.TRIP_DELETE]), tripController.deleteTrip);
+// Admin only: Create trip (assign to driver)
+router.post(
+  '/',
+  rbacMiddleware([Permission.TRIP_CREATE]),
+  validate(createTripSchema),
+  tripController.createTrip
+);
+
+// Admin sees all trips, driver sees only their own trips (handled in controller)
+router.get(
+  '/',
+  rbacMiddleware([Permission.TRIP_READ]),
+  tripController.getAllTrips
+);
+
+// Driver endpoint: Get my trips
+router.get(
+  '/my-trips',
+  tripController.getMyTrips
+);
+
+// Get trip by ID
+router.get(
+  '/:id',
+  rbacMiddleware([Permission.TRIP_READ]),
+  tripController.getTripById
+);
+
+// Update trip status (drivers can update their own trips)
+router.put(
+  '/:id/status',
+  validate(updateStatusSchema),
+  tripController.updateStatus
+);
+
+// Admin only: Full trip update
+router.put(
+  '/:id',
+  rbacMiddleware([Permission.TRIP_UPDATE]),
+  tripController.updateTrip
+);
+
+// Admin only: Calculate trip cost
+router.post(
+  '/:id/calculate-cost',
+  rbacMiddleware([Permission.TRIP_READ]),
+  tripController.calculateTripCost
+);
+
+// Admin only: Delete trip
+router.delete(
+  '/:id',
+  rbacMiddleware([Permission.TRIP_DELETE]),
+  tripController.deleteTrip
+);
 
 export default router;

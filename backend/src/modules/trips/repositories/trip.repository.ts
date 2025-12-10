@@ -11,7 +11,7 @@ export interface ITripRepository extends IRepository<ITripDocument> {
 }
 
 export class TripRepository implements ITripRepository {
-  async create(data: CreateTripDto): Promise<ITripDocument> {
+  async create(data: Partial<ITripDocument> | CreateTripDto): Promise<ITripDocument> {
     return TripModel.create(data);
   }
 
@@ -39,7 +39,7 @@ export class TripRepository implements ITripRepository {
     return TripModel.find().populate('driver truck trailer').sort({ createdAt: -1 });
   }
 
-  async update(id: string, data: UpdateTripDto): Promise<ITripDocument | null> {
+  async update(id: string, data: Partial<ITripDocument> | UpdateTripDto): Promise<ITripDocument | null> {
     return TripModel.findByIdAndUpdate(id, data, { new: true }).populate('driver truck trailer');
   }
 
