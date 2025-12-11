@@ -1,23 +1,23 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, HydratedDocument } from 'mongoose';
 import { TruckStatus } from '../../shared/constants/status.constant';
 
 export interface ITruck {
   registration: string;
   brand: string;
-  model: string;
+  truckModel: string;
   year: number;
   fuelCapacity: number;
   currentKm: number;
   status: TruckStatus;
 }
 
-export interface ITruckDocument extends ITruck, Document {}
+export type ITruckDocument = HydratedDocument<ITruck>;
 
 const truckSchema = new Schema<ITruckDocument>(
   {
     registration: { type: String, required: true, unique: true, uppercase: true },
     brand: { type: String, required: true },
-    model: { type: String, required: true },
+    truckModel: { type: String, required: true },
     year: { type: Number, required: true },
     fuelCapacity: { type: Number, required: true },
     currentKm: { type: Number, required: true, default: 0 },
