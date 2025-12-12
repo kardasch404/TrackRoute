@@ -1,0 +1,51 @@
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { authApi } from '../../services/api';
+import { useAppDispatch } from '../../app/hooks';
+import { loginSuccess, setLoading } from '../../features/auth/authSlice';
+
+const loginSchema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export default function LoginForm() {
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const dispatch = useAppDispatch();
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await authApi.login(data);
+      dispatch(loginSuccess(response.data));
+      window.location.href = '/dashboard';
+    } catch (error: any) {
+      dispatch(setLoading(false));
+      alert(error.response?.data?.message || 'Login failed');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full max-w-md">
+      <div>
+        <label className="block text-sm font-medium mb-1">Email</label>
+        <input {...register('email')} type="email" className="w-full px-3 py-2 border rounded-md" />
+        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Password</label>
+        <input {...register('password')} type="password" className="w-full px-3 py-2 border rounded-md" />
+        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+      </div>
+      <button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50">
+        {isSubmitting ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  );
+}
