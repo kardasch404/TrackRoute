@@ -1,8 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import api from '../../services/api';
-import { AUTH_ENDPOINTS } from '../../services/endpoints';
+import { authApi } from '../../services/api';
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -20,7 +19,7 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      await api.post(AUTH_ENDPOINTS.REGISTER, data);
+      await authApi.register(data);
       alert('Registration successful! Please login.');
       window.location.href = '/login';
     } catch (error: any) {

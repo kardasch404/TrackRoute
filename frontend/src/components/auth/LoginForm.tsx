@@ -1,8 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import api from '../../services/api';
-import { AUTH_ENDPOINTS } from '../../services/endpoints';
+import { authApi } from '../../services/api';
+import { useAppDispatch } from '../../app/hooks';
+import { loginSuccess, setLoading } from '../../features/auth/authSlice';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -16,12 +17,16 @@ export default function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
+  const dispatch = useAppDispatch();
+
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const response = await api.post(AUTH_ENDPOINTS.LOGIN, data);
-      localStorage.setItem('token', response.data.token);
+      dispatch(setLoading(true));
+      const response = await authApi.login(data);
+      dispatch(loginSuccess(response.data));
       window.location.href = '/dashboard';
     } catch (error: any) {
+      dispatch(setLoading(false));
       alert(error.response?.data?.message || 'Login failed');
     }
   };
