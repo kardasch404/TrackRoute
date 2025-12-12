@@ -7,6 +7,7 @@ import RegisterPage from '../pages/auth/RegisterPage';
 import AdminLayout from '../components/layout/AdminLayout';
 import DriverLayout from '../components/layout/DriverLayout';
 import RoleBasedRoute from '../components/layout/RoleBasedRoute';
+import DashboardPage from '../pages/admin/DashboardPage';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         children: [
-          { path: 'dashboard', element: <div>Admin Dashboard</div> },
+          { path: 'dashboard', element: <DashboardPage /> },
           { path: 'trucks', element: <div>Trucks</div> },
           { path: 'trailers', element: <div>Trailers</div> },
           { path: 'trips', element: <div>Trips</div> },
