@@ -8,6 +8,7 @@ export interface IUser {
   lastName: string;
   role: UserRole;
   isActive: boolean;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   createdAt?: Date;
   updatedAt?: Date;
 }

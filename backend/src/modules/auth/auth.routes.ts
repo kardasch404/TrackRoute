@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { AuthController } from './controllers/auth.controller';
+import { AdminController } from './controllers/admin.controller';
 import { AuthService } from './services/auth.service';
 import { UserRepository } from './repositories/user.repository';
 import { validate } from '../../shared/middleware/validation.middleware';
@@ -14,12 +15,17 @@ const router = Router();
 const userRepository = new UserRepository();
 const authService = new AuthService(userRepository);
 const authController = new AuthController(authService);
+const adminController = new AdminController();
 
+// Public routes
+router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.post('/logout', authenticate, authController.logout);
 router.post('/refresh', validate(refreshTokenSchema), authController.refreshToken);
 
-// Admin only - create driver
-router.post('/users', authenticate, validate(registerSchema), authController.register);
+// Admin routes - driver approval
+router.get('/admin/pending-drivers', authenticate, adminController.getPendingDrivers);
+router.put('/admin/approve-driver/:userId', authenticate, adminController.approveDriver);
+router.put('/admin/reject-driver/:userId', authenticate, adminController.rejectDriver);
 
 export default router;

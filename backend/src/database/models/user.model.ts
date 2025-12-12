@@ -40,6 +40,11 @@ const userSchema = new Schema<IUserDocument>(
       type: Boolean,
       default: true,
     },
+    status: {
+      type: String,
+      enum: ['PENDING', 'APPROVED', 'REJECTED'],
+      default: 'PENDING',
+    },
   },
   { timestamps: true }
 );
