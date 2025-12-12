@@ -10,6 +10,7 @@ export interface IUser {
   role: UserRole;
   permissions?: string[];
   isActive: boolean;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -27,23 +27,17 @@ export class AuthService implements IAuthService {
     }
 
     const user = await this.userRepository.create(data);
-    const userId = user._id!.toString();
-    const payload = { userId, role: user.role };
-    const accessToken = JwtUtil.generateAccessToken(payload);
-    const refreshToken = JwtUtil.generateRefreshToken(payload);
-
-    await this.sessionService.createSession(userId, refreshToken);
 
     return {
+      message: 'Registration successful. Please wait for admin approval.',
       user: {
         id: user._id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        status: user.status,
       },
-      accessToken,
-      refreshToken,
     };
   }
 
@@ -56,6 +50,10 @@ export class AuthService implements IAuthService {
     const isPasswordValid = await user.comparePassword(data.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.role === 'DRIVER' && user.status !== 'APPROVED') {
+      throw new UnauthorizedException('Your account is pending approval. Please wait for admin to approve.');
     }
 
     const userId = user._id!.toString();
