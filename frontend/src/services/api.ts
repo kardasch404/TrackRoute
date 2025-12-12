@@ -1,6 +1,6 @@
 import apiClient from './apiClient';
 import { AUTH_ENDPOINTS } from './endpoints';
-import { LoginRequest, LoginResponse, RegisterRequest } from '../features/auth/authTypes';
+import type { LoginRequest, LoginResponse, RegisterRequest } from '../features/auth/authTypes';
 
 export const authApi = {
   login: (data: LoginRequest) => apiClient.post<LoginResponse>(AUTH_ENDPOINTS.LOGIN, data),
