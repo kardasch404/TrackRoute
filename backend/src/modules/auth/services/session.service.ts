@@ -6,8 +6,12 @@ export class SessionService {
   private readonly REFRESH_TOKEN_PREFIX = 'refresh:';
 
   async createSession(userId: string, refreshToken: string): Promise<void> {
-    await this.redis.setex(`${this.SESSION_PREFIX}${userId}`, 604800, refreshToken);
-    await this.redis.setex(`${this.REFRESH_TOKEN_PREFIX}${refreshToken}`, 604800, userId);
+    try {
+      await this.redis.setex(`${this.SESSION_PREFIX}${userId}`, 604800, refreshToken);
+      await this.redis.setex(`${this.REFRESH_TOKEN_PREFIX}${refreshToken}`, 604800, userId);
+    } catch (error) {
+      console.warn('Redis unavailable, skipping session storage');
+    }
   }
 
   async getSession(userId: string): Promise<string | null> {
