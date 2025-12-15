@@ -30,8 +30,8 @@ export class App {
       res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
     });
 
-    // API v1 routes
-    this.app.use('/api/v1/auth', authRoutes);
+    // API routes
+    this.app.use('/api/auth', authRoutes);
   }
 
   private initializeErrorHandling(): void {
@@ -41,7 +41,7 @@ export class App {
 
   public listen(port: number): void {
     this.app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
+      console.log(`Server running on port ${port}`);
     });
   }
 }

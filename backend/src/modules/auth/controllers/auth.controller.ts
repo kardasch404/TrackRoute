@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IAuthService } from '../services/auth.service';
 import { ForbiddenException } from '../../../shared/exceptions/forbidden.exception';
 import { UserRole } from '../../../shared/constants/roles.constant';
+import { Injectable } from '../../../shared/decorators/injectable';
 
 export class AuthController {
   constructor(private readonly authService: IAuthService) {}
