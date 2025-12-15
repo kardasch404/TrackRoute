@@ -30,8 +30,8 @@ export class App {
       res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
     });
 
-    // API routes
-    this.app.use('/api/auth', authRoutes);
+    // API v1 routes
+    this.app.use('/api/v1/auth', authRoutes);
   }
 
   private initializeErrorHandling(): void {
