@@ -11,8 +11,9 @@ export const useAuth = () => {
     try {
       dispatch(setLoading(true));
       const response = await authApi.login(credentials);
-      dispatch(loginSuccess(response.data));
-      navigate(response.data.user.role === 'ADMIN' ? '/admin/dashboard' : '/driver/my-trips');
+      const { user, accessToken } = response.data.data;
+      dispatch(loginSuccess({ user, token: accessToken }));
+      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/driver/my-trips');
     } catch (error: any) {
       dispatch(setLoading(false));
       throw error;
