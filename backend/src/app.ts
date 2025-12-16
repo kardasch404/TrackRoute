@@ -5,6 +5,10 @@ import morgan from 'morgan';
 import { errorHandler, notFoundHandler } from './shared/middleware/error.middleware';
 import { requestLogger } from './shared/middleware/request-logger.middleware';
 import authRoutes from './modules/auth/auth.routes';
+import truckRoutes from './modules/trucks/truck.routes';
+import trailerRoutes from './modules/trailers/trailer.routes';
+import tripRoutes from './modules/trips/trip.routes';
+import dashboardRoutes from './modules/dashboard/dashboard.routes';
 
 export class App {
   public app: Application;
@@ -30,8 +34,12 @@ export class App {
       res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
     });
 
-    // API v1 routes
-    this.app.use('/api/v1/auth', authRoutes);
+    // API routes
+    this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/trucks', truckRoutes);
+    this.app.use('/api/trailers', trailerRoutes);
+    this.app.use('/api/trips', tripRoutes);
+    this.app.use('/api/dashboard', dashboardRoutes);
   }
 
   private initializeErrorHandling(): void {
@@ -41,7 +49,7 @@ export class App {
 
   public listen(port: number): void {
     this.app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
+      console.log(`Server running on port ${port}`);
     });
   }
 }

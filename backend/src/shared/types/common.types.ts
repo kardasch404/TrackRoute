@@ -13,3 +13,20 @@ export interface IService<T, CreateDto, UpdateDto> {
   update(id: string, data: UpdateDto): Promise<T>;
   delete(id: string): Promise<void>;
 }
+
+export interface PaginationQuery {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

@@ -1,9 +1,9 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { IUser } from '../../modules/auth/entities/user.entity';
 import { UserRole } from '../../shared/constants/roles.constant';
 
-export interface IUserDocument extends IUser, Document {
+export interface IUserDocument extends Omit<IUser, '_id'>, Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -31,14 +31,24 @@ const userSchema = new Schema<IUserDocument>(
       required: true,
       trim: true,
     },
+    phone: {
+      type: String,
+      trim: true,
+    },
     role: {
       type: String,
       enum: Object.values(UserRole),
       default: UserRole.DRIVER,
     },
+    permissions: [{ type: String }],
     isActive: {
       type: Boolean,
       default: true,
+    },
+    status: {
+      type: String,
+      enum: ['PENDING', 'APPROVED', 'REJECTED'],
+      default: 'PENDING',
     },
   },
   { timestamps: true }
@@ -46,10 +56,9 @@ const userSchema = new Schema<IUserDocument>(
 
 userSchema.index({ email: 1 });
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
 userSchema.methods.comparePassword = async function (
