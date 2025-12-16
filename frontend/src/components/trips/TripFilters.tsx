@@ -51,8 +51,9 @@ export default function TripFilters({ filters, onFilterChange }: TripFiltersProp
           <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
           <input
             type="date"
-            value={filters.startDate || ''}
+            value={filters.startDate || new Date().toISOString().split('T')[0]}
             onChange={(e) => onFilterChange({ ...filters, startDate: e.target.value })}
+            min={new Date().toISOString().split('T')[0]}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -64,6 +65,7 @@ export default function TripFilters({ filters, onFilterChange }: TripFiltersProp
             type="date"
             value={filters.endDate || ''}
             onChange={(e) => onFilterChange({ ...filters, endDate: e.target.value })}
+            min={filters.startDate || new Date().toISOString().split('T')[0]}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>

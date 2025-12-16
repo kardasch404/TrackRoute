@@ -182,6 +182,7 @@ function RouteDetailsStep() {
               type="date"
               value={route.scheduledDate}
               onChange={(e) => dispatch({ type: 'UPDATE_ROUTE', payload: { scheduledDate: e.target.value } })}
+              min={new Date().toISOString().split('T')[0]}
               className={`w-full px-3 py-2 border rounded-md ${errors['scheduledDate'] ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors['scheduledDate'] && <p className="text-red-500 text-sm mt-1">{errors['scheduledDate']}</p>}
