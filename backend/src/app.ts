@@ -31,7 +31,7 @@ export class App {
     });
 
     // API v1 routes
-    this.app.use('/api/v1/auth', authRoutes);
+    this.app.use('/api/auth', authRoutes);
   }
 
   private initializeErrorHandling(): void {
