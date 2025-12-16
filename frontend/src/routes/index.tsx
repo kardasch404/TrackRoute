@@ -13,6 +13,7 @@ import DashboardPage from '../pages/admin/DashboardPage';
 import TrucksPage from '../pages/admin/TrucksPage';
 import TrailersPage from '../pages/admin/TrailersPage';
 import DriversPage from '../pages/admin/DriversPage';
+import TripsPage from '../pages/admin/TripsPage';
 import DriverDashboardPage from '../pages/driver/DriverDashboardPage';
 
 const router = createBrowserRouter([
@@ -53,7 +54,7 @@ const router = createBrowserRouter([
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'trucks', element: <TrucksPage /> },
           { path: 'trailers', element: <TrailersPage /> },
-          { path: 'trips', element: <div>Trips</div> },
+          { path: 'trips', element: <TripsPage /> },
           { path: 'drivers', element: <DriversPage /> },
           { path: 'maintenance', element: <div>Maintenance</div> },
           { path: 'reports', element: <div>Reports</div> },
