@@ -4,20 +4,19 @@ import TripStatusBadge from './TripStatusBadge';
 interface TripCardProps {
   trip: Trip;
   onView: (trip: Trip) => void;
-  onAssign: (trip: Trip) => void;
   onStatusChange?: (trip: Trip) => void;
   onDelete?: (trip: Trip) => void;
 }
 
-export default function TripCard({ trip, onView, onAssign, onStatusChange, onDelete }: TripCardProps) {
+export default function TripCard({ trip, onView, onStatusChange, onDelete }: TripCardProps) {
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-5">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{trip.tripNumber}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{trip.code}</h3>
           <p className="text-sm text-gray-500">
-            Scheduled: {new Date(trip.scheduledDate).toLocaleDateString()}
+            Created: {new Date(trip.createdAt).toLocaleDateString()}
           </p>
         </div>
         <TripStatusBadge status={trip.status} />
@@ -33,12 +32,10 @@ export default function TripCard({ trip, onView, onAssign, onStatusChange, onDel
           </div>
           <div className="flex-1">
             <div className="mb-2">
-              <p className="text-sm font-medium text-gray-900">{trip.origin.city}</p>
-              <p className="text-xs text-gray-500">{trip.origin.address}</p>
+              <p className="text-sm font-medium text-gray-900">{trip.origin}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">{trip.destination.city}</p>
-              <p className="text-xs text-gray-500">{trip.destination.address}</p>
+              <p className="text-sm font-medium text-gray-900">{trip.destination}</p>
             </div>
           </div>
         </div>
@@ -51,8 +48,8 @@ export default function TripCard({ trip, onView, onAssign, onStatusChange, onDel
           <span className="ml-1 font-medium">{trip.distance} km</span>
         </div>
         <div className="bg-gray-50 rounded p-2">
-          <span className="text-gray-500">Cargo:</span>
-          <span className="ml-1 font-medium">{trip.cargo.weight} kg</span>
+          <span className="text-gray-500">Start KM:</span>
+          <span className="ml-1 font-medium">{trip.startKm.toLocaleString()}</span>
         </div>
       </div>
 
@@ -62,7 +59,7 @@ export default function TripCard({ trip, onView, onAssign, onStatusChange, onDel
           <div className="flex items-center gap-2 text-sm">
             <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
               <span className="text-blue-600 font-medium text-xs">
-                {trip.driver.firstName[0]}{trip.driver.lastName[0]}
+                {trip.driver.firstName?.[0]}{trip.driver.lastName?.[0]}
               </span>
             </div>
             <div>
@@ -87,20 +84,20 @@ export default function TripCard({ trip, onView, onAssign, onStatusChange, onDel
         >
           View
         </button>
-        {trip.status === 'PENDING' && (
-          <button
-            onClick={() => onAssign(trip)}
-            className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Assign
-          </button>
-        )}
-        {trip.status === 'ASSIGNED' && onStatusChange && (
+        {trip.status === 'PLANNED' && onStatusChange && (
           <button
             onClick={() => onStatusChange(trip)}
             className="flex-1 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
           >
             Start
+          </button>
+        )}
+        {trip.status === 'IN_PROGRESS' && onStatusChange && (
+          <button
+            onClick={() => onStatusChange(trip)}
+            className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Complete
           </button>
         )}
         {onDelete && (

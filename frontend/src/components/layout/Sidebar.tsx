@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Truck, Container, MapPin, Users, Wrench, FileText } from 'lucide-react';
+import { LayoutDashboard, Truck, Container, MapPin, Users, Wrench, FileText, User } from 'lucide-react';
 
 interface SidebarProps {
   role: 'ADMIN' | 'DRIVER';
@@ -19,6 +19,7 @@ export default function Sidebar({ role }: SidebarProps) {
   const driverLinks = [
     { to: '/driver/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/driver/my-trips', icon: MapPin, label: 'My Trips' },
+    { to: '/driver/profile', icon: User, label: 'My Profile' },
   ];
 
   const links = role === 'ADMIN' ? adminLinks : driverLinks;

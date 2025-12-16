@@ -34,6 +34,25 @@ router.get(
   tripController.getMyTrips
 );
 
+// Get available resources for trip assignment (must be before /:id routes)
+router.get(
+  '/available/drivers',
+  rbacMiddleware([Permission.TRIP_CREATE]),
+  tripController.getAvailableDrivers
+);
+
+router.get(
+  '/available/trucks',
+  rbacMiddleware([Permission.TRIP_CREATE]),
+  tripController.getAvailableTrucks
+);
+
+router.get(
+  '/available/trailers',
+  rbacMiddleware([Permission.TRIP_CREATE]),
+  tripController.getAvailableTrailers
+);
+
 // Get trip by ID
 router.get(
   '/:id',

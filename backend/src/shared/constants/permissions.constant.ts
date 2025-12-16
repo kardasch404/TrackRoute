@@ -1,4 +1,7 @@
 export enum Permission {
+  // Dashboard permissions
+  DASHBOARD_READ = 'dashboard:read',
+
   // User permissions
   USER_CREATE = 'user:create',
   USER_READ = 'user:read',

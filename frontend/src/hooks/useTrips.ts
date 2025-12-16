@@ -35,7 +35,7 @@ export function useAvailableDrivers() {
   return useQuery({
     queryKey: ['available-drivers'],
     queryFn: async () => {
-      const { data } = await apiClient.get('/auth/admin/drivers?status=APPROVED');
+      const { data } = await apiClient.get('/trips/available/drivers');
       return data.data;
     },
   });
@@ -45,7 +45,7 @@ export function useAvailableTrucks() {
   return useQuery({
     queryKey: ['available-trucks'],
     queryFn: async () => {
-      const { data } = await apiClient.get('/trucks?status=AVAILABLE');
+      const { data } = await apiClient.get('/trips/available/trucks');
       return data.data;
     },
   });
@@ -55,7 +55,7 @@ export function useAvailableTrailers() {
   return useQuery({
     queryKey: ['available-trailers'],
     queryFn: async () => {
-      const { data } = await apiClient.get('/trailers?status=AVAILABLE');
+      const { data } = await apiClient.get('/trips/available/trailers');
       return data.data;
     },
   });

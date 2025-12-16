@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTripCreation, TripCreationProvider } from '../../features/trips/TripCreationContext';
 import { useTripMutations } from '../../hooks/useTripMutations';
 import { useAvailableDrivers, useAvailableTrucks, useAvailableTrailers } from '../../hooks/useTrips';
@@ -6,13 +7,12 @@ import { useAvailableDrivers, useAvailableTrucks, useAvailableTrailers } from '.
 function StepIndicator({ currentStep }: { currentStep: number }) {
   const steps = [
     { num: 1, label: 'Route Details' },
-    { num: 2, label: 'Cargo Details' },
-    { num: 3, label: 'Assignment' },
+    { num: 2, label: 'Assignment' },
   ];
 
   return (
     <div className="mb-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-center">
         {steps.map((step, index) => (
           <div key={step.num} className="flex items-center">
             <div className="flex flex-col items-center">
@@ -37,7 +37,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
             </div>
             {index < steps.length - 1 && (
               <div
-                className={`w-24 h-1 mx-2 ${
+                className={`w-32 h-1 mx-4 ${
                   step.num < currentStep ? 'bg-green-500' : 'bg-gray-200'
                 }`}
               />
@@ -54,222 +54,59 @@ function RouteDetailsStep() {
   const { state, dispatch } = useTripCreation();
   const { route, errors } = state;
 
-  const updateOrigin = (field: string, value: string) => {
-    dispatch({
-      type: 'UPDATE_ROUTE',
-      payload: { origin: { ...route.origin, [field]: value } },
-    });
-  };
-
-  const updateDestination = (field: string, value: string) => {
-    dispatch({
-      type: 'UPDATE_ROUTE',
-      payload: { destination: { ...route.destination, [field]: value } },
-    });
-  };
-
   return (
     <div className="space-y-6">
       {/* Origin */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Origin</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address *</label>
-            <input
-              type="text"
-              value={route.origin.address}
-              onChange={(e) => updateOrigin('address', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['origin.address'] ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Street address"
-            />
-            {errors['origin.address'] && <p className="text-red-500 text-sm mt-1">{errors['origin.address']}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
-            <input
-              type="text"
-              value={route.origin.city}
-              onChange={(e) => updateOrigin('city', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['origin.city'] ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="City"
-            />
-            {errors['origin.city'] && <p className="text-red-500 text-sm mt-1">{errors['origin.city']}</p>}
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
-            <input
-              type="text"
-              value={route.origin.country}
-              onChange={(e) => updateOrigin('country', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              placeholder="Country"
-            />
-          </div>
-        </div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Origin *</label>
+        <input
+          type="text"
+          value={route.origin}
+          onChange={(e) => dispatch({ type: 'UPDATE_ROUTE', payload: { origin: e.target.value } })}
+          className={`w-full px-3 py-2 border rounded-md ${errors['origin'] ? 'border-red-500' : 'border-gray-300'}`}
+          placeholder="e.g., Bucharest, Romania"
+        />
+        {errors['origin'] && <p className="text-red-500 text-sm mt-1">{errors['origin']}</p>}
       </div>
 
       {/* Destination */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Destination</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address *</label>
-            <input
-              type="text"
-              value={route.destination.address}
-              onChange={(e) => updateDestination('address', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['destination.address'] ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Street address"
-            />
-            {errors['destination.address'] && <p className="text-red-500 text-sm mt-1">{errors['destination.address']}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
-            <input
-              type="text"
-              value={route.destination.city}
-              onChange={(e) => updateDestination('city', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['destination.city'] ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="City"
-            />
-            {errors['destination.city'] && <p className="text-red-500 text-sm mt-1">{errors['destination.city']}</p>}
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
-            <input
-              type="text"
-              value={route.destination.country}
-              onChange={(e) => updateDestination('country', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              placeholder="Country"
-            />
-          </div>
-        </div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Destination *</label>
+        <input
+          type="text"
+          value={route.destination}
+          onChange={(e) => dispatch({ type: 'UPDATE_ROUTE', payload: { destination: e.target.value } })}
+          className={`w-full px-3 py-2 border rounded-md ${errors['destination'] ? 'border-red-500' : 'border-gray-300'}`}
+          placeholder="e.g., Sofia, Bulgaria"
+        />
+        {errors['destination'] && <p className="text-red-500 text-sm mt-1">{errors['destination']}</p>}
       </div>
 
-      {/* Trip Details */}
+      {/* Distance */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Trip Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Distance (km) *</label>
-            <input
-              type="number"
-              value={route.distance || ''}
-              onChange={(e) => dispatch({ type: 'UPDATE_ROUTE', payload: { distance: Number(e.target.value) } })}
-              className={`w-full px-3 py-2 border rounded-md ${errors['distance'] ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="0"
-              min="0"
-            />
-            {errors['distance'] && <p className="text-red-500 text-sm mt-1">{errors['distance']}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Est. Duration (hours)</label>
-            <input
-              type="number"
-              value={route.estimatedDuration || ''}
-              onChange={(e) => dispatch({ type: 'UPDATE_ROUTE', payload: { estimatedDuration: Number(e.target.value) } })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              placeholder="0"
-              min="0"
-              step="0.5"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Scheduled Date *</label>
-            <input
-              type="date"
-              value={route.scheduledDate}
-              onChange={(e) => dispatch({ type: 'UPDATE_ROUTE', payload: { scheduledDate: e.target.value } })}
-              min={new Date().toISOString().split('T')[0]}
-              className={`w-full px-3 py-2 border rounded-md ${errors['scheduledDate'] ? 'border-red-500' : 'border-gray-300'}`}
-            />
-            {errors['scheduledDate'] && <p className="text-red-500 text-sm mt-1">{errors['scheduledDate']}</p>}
-          </div>
-        </div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Distance (km) *</label>
+        <input
+          type="number"
+          value={route.distance || ''}
+          onChange={(e) => dispatch({ type: 'UPDATE_ROUTE', payload: { distance: Number(e.target.value) } })}
+          className={`w-full px-3 py-2 border rounded-md ${errors['distance'] ? 'border-red-500' : 'border-gray-300'}`}
+          placeholder="0"
+          min="1"
+        />
+        {errors['distance'] && <p className="text-red-500 text-sm mt-1">{errors['distance']}</p>}
       </div>
     </div>
   );
 }
 
-// Step 2: Cargo Details
-function CargoDetailsStep() {
-  const { state, dispatch } = useTripCreation();
-  const { cargo, errors } = state;
-
-  const updateCargo = (field: string, value: string | number) => {
-    dispatch({ type: 'UPDATE_CARGO', payload: { [field]: value } });
-  };
-
-  const cargoTypes = ['General', 'Refrigerated', 'Hazardous', 'Fragile', 'Bulk', 'Livestock', 'Other'];
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Cargo Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
-            <textarea
-              value={cargo.description}
-              onChange={(e) => updateCargo('description', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['description'] ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Describe the cargo..."
-              rows={3}
-            />
-            {errors['description'] && <p className="text-red-500 text-sm mt-1">{errors['description']}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Weight (kg) *</label>
-            <input
-              type="number"
-              value={cargo.weight || ''}
-              onChange={(e) => updateCargo('weight', Number(e.target.value))}
-              className={`w-full px-3 py-2 border rounded-md ${errors['weight'] ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="0"
-              min="0"
-            />
-            {errors['weight'] && <p className="text-red-500 text-sm mt-1">{errors['weight']}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
-            <select
-              value={cargo.type}
-              onChange={(e) => updateCargo('type', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['type'] ? 'border-red-500' : 'border-gray-300'}`}
-            >
-              <option value="">Select cargo type</option>
-              {cargoTypes.map((type) => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-            {errors['type'] && <p className="text-red-500 text-sm mt-1">{errors['type']}</p>}
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
-            <textarea
-              value={cargo.notes || ''}
-              onChange={(e) => updateCargo('notes', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              placeholder="Any special instructions or notes..."
-              rows={2}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Step 3: Assignment
+// Step 2: Assignment
 function AssignmentStep() {
   const { state, dispatch } = useTripCreation();
   const { assignment, errors } = state;
 
-  const { data: drivers, isLoading: loadingDrivers } = useAvailableDrivers();
-  const { data: trucks, isLoading: loadingTrucks } = useAvailableTrucks();
-  const { data: trailers, isLoading: loadingTrailers } = useAvailableTrailers();
+  const { data: drivers, isLoading: loadingDrivers, isError: driversError } = useAvailableDrivers();
+  const { data: trucks, isLoading: loadingTrucks, isError: trucksError } = useAvailableTrucks();
+  const { data: trailers, isLoading: loadingTrailers, isError: trailersError } = useAvailableTrailers();
 
   // Find selected truck to show currentKm
   const selectedTruck = trucks?.find((t: { _id: string }) => t._id === assignment.truckId);
@@ -278,6 +115,9 @@ function AssignmentStep() {
     dispatch({ type: 'UPDATE_ASSIGNMENT', payload: { [field]: value || undefined } });
   };
 
+  const hasError = driversError || trucksError || trailersError;
+  const isLoading = loadingDrivers || loadingTrucks || loadingTrailers;
+
   return (
     <div className="space-y-6">
       <div>
@@ -285,6 +125,52 @@ function AssignmentStep() {
         <p className="text-sm text-gray-500 mb-4">
           Assign a driver and truck to this trip. Trailer is optional.
         </p>
+
+        {/* Error state */}
+        {hasError && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h4 className="font-medium text-red-800">Failed to load resources</h4>
+                <p className="text-sm text-red-700 mt-1">Unable to fetch available drivers, trucks, or trailers. Please try again later.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Loading state */}
+        {isLoading && !hasError && (
+          <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="flex items-center gap-3">
+              <svg className="animate-spin h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span className="text-gray-600">Loading available resources...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Warning if no resources available */}
+        {!isLoading && !hasError && (drivers?.length === 0 || trucks?.length === 0) && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <h4 className="font-medium text-yellow-800">Limited Availability</h4>
+                <ul className="text-sm text-yellow-700 mt-1">
+                  {drivers?.length === 0 && <li>• No drivers available (all have active trips)</li>}
+                  {trucks?.length === 0 && <li>• No trucks available (all have active trips)</li>}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="grid grid-cols-1 gap-4">
           {/* Driver Selection */}
@@ -293,10 +179,12 @@ function AssignmentStep() {
             <select
               value={assignment.driverId || ''}
               onChange={(e) => updateAssignment('driverId', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['driverId'] ? 'border-red-500' : 'border-gray-300'}`}
-              disabled={loadingDrivers}
+              className={`w-full px-3 py-2 border rounded-md ${errors['driverId'] ? 'border-red-500' : 'border-gray-300'} ${(isLoading || hasError || drivers?.length === 0) ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              disabled={isLoading || hasError || drivers?.length === 0}
             >
-              <option value="">Select driver</option>
+              <option value="">
+                {loadingDrivers ? 'Loading drivers...' : driversError ? 'Error loading drivers' : drivers?.length === 0 ? 'No drivers available' : 'Select driver'}
+              </option>
               {drivers?.map((driver: { _id: string; firstName: string; lastName: string; email: string }) => (
                 <option key={driver._id} value={driver._id}>
                   {driver.firstName} {driver.lastName} - {driver.email}
@@ -304,6 +192,9 @@ function AssignmentStep() {
               ))}
             </select>
             {errors['driverId'] && <p className="text-red-500 text-sm mt-1">{errors['driverId']}</p>}
+            {!loadingDrivers && drivers?.length === 0 && !driversError && (
+              <p className="text-yellow-600 text-sm mt-1">All approved drivers have active trips assigned.</p>
+            )}
           </div>
 
           {/* Truck Selection */}
@@ -312,10 +203,12 @@ function AssignmentStep() {
             <select
               value={assignment.truckId || ''}
               onChange={(e) => updateAssignment('truckId', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md ${errors['truckId'] ? 'border-red-500' : 'border-gray-300'}`}
-              disabled={loadingTrucks}
+              className={`w-full px-3 py-2 border rounded-md ${errors['truckId'] ? 'border-red-500' : 'border-gray-300'} ${(isLoading || hasError || trucks?.length === 0) ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              disabled={isLoading || hasError || trucks?.length === 0}
             >
-              <option value="">Select truck</option>
+              <option value="">
+                {loadingTrucks ? 'Loading trucks...' : trucksError ? 'Error loading trucks' : trucks?.length === 0 ? 'No trucks available' : 'Select truck'}
+              </option>
               {trucks?.map((truck: { _id: string; registration: string; brand: string; model: string; currentKm?: number }) => (
                 <option key={truck._id} value={truck._id}>
                   {truck.registration} - {truck.brand} {truck.model} ({truck.currentKm?.toLocaleString() || 0} km)
@@ -323,6 +216,9 @@ function AssignmentStep() {
               ))}
             </select>
             {errors['truckId'] && <p className="text-red-500 text-sm mt-1">{errors['truckId']}</p>}
+            {!loadingTrucks && trucks?.length === 0 && !trucksError && (
+              <p className="text-yellow-600 text-sm mt-1">All available trucks have active trips assigned.</p>
+            )}
             {selectedTruck && (
               <p className="text-sm text-gray-500 mt-1">
                 Current odometer: <span className="font-medium">{selectedTruck.currentKm?.toLocaleString() || 0} km</span>
@@ -336,10 +232,12 @@ function AssignmentStep() {
             <select
               value={assignment.trailerId || ''}
               onChange={(e) => updateAssignment('trailerId', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              disabled={loadingTrailers}
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md ${(loadingTrailers || trailersError) ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              disabled={loadingTrailers || trailersError}
             >
-              <option value="">Select trailer (optional)</option>
+              <option value="">
+                {loadingTrailers ? 'Loading trailers...' : trailersError ? 'Error loading trailers' : trailers?.length === 0 ? 'No trailers available (optional)' : 'Select trailer (optional)'}
+              </option>
               {trailers?.map((trailer: { _id: string; registration: string; type: string }) => (
                 <option key={trailer._id} value={trailer._id}>
                   {trailer.registration} - {trailer.type}
@@ -366,6 +264,7 @@ function CreateTripFormContent({ onClose, onSuccess }: { onClose: () => void; on
   const { state, dispatch, getFormData, validateStep } = useTripCreation();
   const { createTrip } = useTripMutations();
   const { data: trucks } = useAvailableTrucks();
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
 
   const handleNext = () => {
     if (validateStep(state.currentStep)) {
@@ -381,6 +280,7 @@ function CreateTripFormContent({ onClose, onSuccess }: { onClose: () => void; on
     if (!validateStep(state.currentStep)) return;
     
     dispatch({ type: 'SET_SUBMITTING', payload: true });
+    setSubmitError(null);
     
     try {
       const formData = getFormData();
@@ -393,8 +293,11 @@ function CreateTripFormContent({ onClose, onSuccess }: { onClose: () => void; on
       dispatch({ type: 'RESET_FORM' });
       onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Failed to create trip:', error);
+    } catch (error: unknown) {
+      // Extract error message from API response
+      const apiError = error as { response?: { data?: { message?: string } } };
+      const message = apiError?.response?.data?.message || 'Failed to create trip. Please try again.';
+      setSubmitError(message);
     } finally {
       dispatch({ type: 'SET_SUBMITTING', payload: false });
     }
@@ -405,8 +308,6 @@ function CreateTripFormContent({ onClose, onSuccess }: { onClose: () => void; on
       case 1:
         return <RouteDetailsStep />;
       case 2:
-        return <CargoDetailsStep />;
-      case 3:
         return <AssignmentStep />;
       default:
         return null;
@@ -417,7 +318,28 @@ function CreateTripFormContent({ onClose, onSuccess }: { onClose: () => void; on
     <div className="p-6">
       <StepIndicator currentStep={state.currentStep} />
       
-      <div className="min-h-[400px]">
+      {/* Error Alert */}
+      {submitError && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+          <svg className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h4 className="font-medium text-red-800">Error</h4>
+            <p className="text-sm text-red-700">{submitError}</p>
+          </div>
+          <button 
+            onClick={() => setSubmitError(null)}
+            className="ml-auto text-red-500 hover:text-red-700"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+      
+      <div className="min-h-[300px]">
         {renderStep()}
       </div>
 

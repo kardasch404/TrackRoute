@@ -47,17 +47,17 @@ export default function AssignTripModal({ isOpen, onClose, trip, onSuccess }: As
         {/* Trip Summary */}
         <div className="bg-gray-50 rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="font-semibold text-gray-900">{trip.tripNumber}</span>
+            <span className="font-semibold text-gray-900">{trip.code}</span>
             <TripStatusBadge status={trip.status} size="sm" />
           </div>
           <div className="text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <span className="font-medium">From:</span>
-              <span>{trip.origin.city}</span>
+              <span>{trip.origin}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="font-medium">To:</span>
-              <span>{trip.destination.city}</span>
+              <span>{trip.destination}</span>
             </div>
           </div>
         </div>

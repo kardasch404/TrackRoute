@@ -6,8 +6,7 @@ interface TripStatusBadgeProps {
 }
 
 const statusConfig: Record<TripStatus, { bg: string; text: string; label: string }> = {
-  PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pending' },
-  ASSIGNED: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Assigned' },
+  PLANNED: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Planned' },
   IN_PROGRESS: { bg: 'bg-purple-100', text: 'text-purple-800', label: 'In Progress' },
   COMPLETED: { bg: 'bg-green-100', text: 'text-green-800', label: 'Completed' },
   CANCELLED: { bg: 'bg-red-100', text: 'text-red-800', label: 'Cancelled' },
@@ -20,7 +19,7 @@ const sizeClasses = {
 };
 
 export default function TripStatusBadge({ status, size = 'md' }: TripStatusBadgeProps) {
-  const config = statusConfig[status] || statusConfig.PENDING;
+  const config = statusConfig[status] || statusConfig.PLANNED;
   
   return (
     <span

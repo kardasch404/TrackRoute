@@ -161,8 +161,9 @@ export class TripService {
   private async validateVehicleTires(vehicleId: string, vehicleType: VehicleType, tripDistance: number): Promise<void> {
     const tires = await TireModel.find({ vehicle: vehicleId, vehicleType });
 
+    // Skip tire validation if no tires are registered for this vehicle
     if (tires.length === 0) {
-      throw new ValidationException(`No tires found for ${vehicleType.toLowerCase()}`);
+      return;
     }
 
     for (const tire of tires) {
@@ -251,7 +252,7 @@ export class TripService {
     return trip;
   }
 
-  async updateStatus(id: string, status: TripStatus, currentUserId: string) {
+  async updateStatus(id: string, status: TripStatus, currentUserId: string, completionData?: { endKm?: number; fuelConsumed?: number }) {
     const trip = await this.tripRepository.findById(id);
     if (!trip) {
       throw new NotFoundException('Trip not found');
@@ -262,8 +263,13 @@ export class TripService {
       throw new NotFoundException('Current user not found');
     }
 
+    // Get the driver ID (handle both populated and non-populated cases)
+    const tripDriverId = typeof trip.driver === 'object' && trip.driver !== null 
+      ? (trip.driver as any)._id?.toString() 
+      : trip.driver?.toString();
+
     // Drivers can only update their own trips
-    if (currentUser.role === UserRole.DRIVER && trip.driver.toString() !== currentUserId) {
+    if (currentUser.role === UserRole.DRIVER && tripDriverId !== currentUserId) {
       throw new ForbiddenException('You can only update your own trips');
     }
 
@@ -281,6 +287,17 @@ export class TripService {
       }
       updateData.completedAt = new Date();
 
+      // Add endKm and fuelConsumed from request if provided
+      const endKm = completionData?.endKm;
+      const fuelConsumed = completionData?.fuelConsumed;
+
+      if (endKm) {
+        updateData.endKm = endKm;
+      }
+      if (fuelConsumed !== undefined) {
+        updateData.fuelConsumed = fuelConsumed;
+      }
+
       // Update vehicle statuses back to AVAILABLE
       await TruckModel.findByIdAndUpdate(trip.truck, { status: TruckStatus.AVAILABLE });
       if (trip.trailer) {
@@ -288,18 +305,18 @@ export class TripService {
       }
 
       // Calculate fuel consumption if endKm is provided
-      if (trip.endKm) {
-        const distanceTraveled = trip.endKm - trip.startKm;
-        if (distanceTraveled > 0 && trip.fuelConsumed) {
+      if (endKm) {
+        const distanceTraveled = endKm - trip.startKm;
+        if (distanceTraveled > 0 && fuelConsumed) {
           // Fuel consumption is already set, just validate
-          if (trip.fuelConsumed < 0) {
+          if (fuelConsumed < 0) {
             throw new ValidationException('Fuel consumed cannot be negative');
           }
         }
 
         // Update truck and trailer currentKm
         await TruckModel.findByIdAndUpdate(trip.truck, { 
-          currentKm: trip.endKm 
+          currentKm: endKm 
         });
 
         if (trip.trailer) {
@@ -313,10 +330,23 @@ export class TripService {
           }
         }
 
+        // Get vehicle IDs (handle both populated and non-populated cases)
+        const truckId = typeof trip.truck === 'object' && trip.truck !== null 
+          ? (trip.truck as any)._id?.toString() 
+          : trip.truck?.toString();
+        
+        const trailerId = trip.trailer 
+          ? (typeof trip.trailer === 'object' && trip.trailer !== null 
+            ? (trip.trailer as any)._id?.toString() 
+            : trip.trailer?.toString())
+          : null;
+
         // Update tire currentKm for truck and trailer
-        await this.updateVehicleTiresKm(trip.truck.toString(), distanceTraveled, VehicleType.TRUCK);
-        if (trip.trailer) {
-          await this.updateVehicleTiresKm(trip.trailer.toString(), distanceTraveled, VehicleType.TRAILER);
+        if (truckId) {
+          await this.updateVehicleTiresKm(truckId, distanceTraveled, VehicleType.TRUCK);
+        }
+        if (trailerId) {
+          await this.updateVehicleTiresKm(trailerId, distanceTraveled, VehicleType.TRAILER);
         }
       }
     } else if (status === TripStatus.CANCELLED) {
@@ -377,6 +407,69 @@ export class TripService {
     }
     
     return trip.fuelConsumed * fuelPricePerLiter;
+  }
+
+  /**
+   * Get drivers available for trip assignment (approved, active, no active trips)
+   */
+  async getAvailableDrivers() {
+    // Get IDs of drivers who have active trips
+    const activeTrips = await TripModel.find({
+      status: { $in: [TripStatus.PLANNED, TripStatus.IN_PROGRESS] },
+    }).select('driver');
+    
+    const busyDriverIds = activeTrips.map(trip => trip.driver.toString());
+
+    // Get approved, active drivers who are not in active trips
+    const drivers = await UserModel.find({
+      role: UserRole.DRIVER,
+      isActive: true,
+      status: 'APPROVED',
+      _id: { $nin: busyDriverIds },
+    }).select('_id firstName lastName email');
+
+    return drivers;
+  }
+
+  /**
+   * Get trucks available for trip assignment (AVAILABLE status, no active trips)
+   */
+  async getAvailableTrucks() {
+    // Get IDs of trucks that have active trips
+    const activeTrips = await TripModel.find({
+      status: { $in: [TripStatus.PLANNED, TripStatus.IN_PROGRESS] },
+    }).select('truck');
+    
+    const busyTruckIds = activeTrips.map(trip => trip.truck.toString());
+
+    // Get available trucks that are not in active trips
+    const trucks = await TruckModel.find({
+      status: TruckStatus.AVAILABLE,
+      _id: { $nin: busyTruckIds },
+    });
+
+    return trucks;
+  }
+
+  /**
+   * Get trailers available for trip assignment (AVAILABLE status, no active trips)
+   */
+  async getAvailableTrailers() {
+    // Get IDs of trailers that have active trips
+    const activeTrips = await TripModel.find({
+      status: { $in: [TripStatus.PLANNED, TripStatus.IN_PROGRESS] },
+      trailer: { $exists: true, $ne: null },
+    }).select('trailer');
+    
+    const busyTrailerIds = activeTrips.map(trip => trip.trailer?.toString()).filter(Boolean);
+
+    // Get available trailers that are not in active trips
+    const trailers = await TrailerModel.find({
+      status: TrailerStatus.AVAILABLE,
+      _id: { $nin: busyTrailerIds },
+    });
+
+    return trailers;
   }
 
 }

@@ -1,6 +1,7 @@
 import { Route } from 'react-router-dom';
 import DriverLayout from '../components/layout/DriverLayout';
 import RoleBasedRoute from '../components/layout/RoleBasedRoute';
+import MyTripsPage from '../pages/driver/MyTripsPage';
 
 export default function DriverRoutes() {
   return (
@@ -12,7 +13,7 @@ export default function DriverRoutes() {
         </RoleBasedRoute>
       }
     >
-      <Route path="my-trips" element={<div>My Trips</div>} />
+      <Route path="my-trips" element={<MyTripsPage />} />
       <Route path="trip/:id" element={<div>Trip Details</div>} />
     </Route>
   );

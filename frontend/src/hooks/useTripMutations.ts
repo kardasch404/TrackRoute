@@ -37,17 +37,13 @@ export function useTripMutations() {
 
   const createTrip = useMutation({
     mutationFn: async (formData: CreateTripFormData & { startKm: number }) => {
-      // Build origin and destination as strings
-      const originStr = `${formData.route.origin.address}, ${formData.route.origin.city}, ${formData.route.origin.country}`;
-      const destinationStr = `${formData.route.destination.address}, ${formData.route.destination.city}, ${formData.route.destination.country}`;
-      
       const payload: CreateTripPayload = {
         code: generateTripCode(),
-        driver: formData.assignment.driverId || '',
-        truck: formData.assignment.truckId || '',
+        driver: formData.assignment.driverId,
+        truck: formData.assignment.truckId,
         trailer: formData.assignment.trailerId,
-        origin: originStr,
-        destination: destinationStr,
+        origin: formData.route.origin,
+        destination: formData.route.destination,
         distance: formData.route.distance,
         startKm: formData.startKm,
       };

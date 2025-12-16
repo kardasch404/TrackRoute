@@ -7,8 +7,7 @@ interface TripFiltersProps {
 
 const statusOptions: { value: TripStatus | ''; label: string }[] = [
   { value: '', label: 'All Statuses' },
-  { value: 'PENDING', label: 'Pending' },
-  { value: 'ASSIGNED', label: 'Assigned' },
+  { value: 'PLANNED', label: 'Planned' },
   { value: 'IN_PROGRESS', label: 'In Progress' },
   { value: 'COMPLETED', label: 'Completed' },
   { value: 'CANCELLED', label: 'Cancelled' },
@@ -23,9 +22,9 @@ export default function TripFilters({ filters, onFilterChange }: TripFiltersProp
           <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
           <input
             type="text"
-            placeholder="Trip number, location..."
+            placeholder="Trip code, location..."
             value={filters.search || ''}
-            onChange={(e) => onFilterChange({ ...filters, search: e.target.value })}
+            onChange={(e) => onFilterChange({ ...filters, search: e.target.value || undefined })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -35,7 +34,7 @@ export default function TripFilters({ filters, onFilterChange }: TripFiltersProp
           <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select
             value={filters.status || ''}
-            onChange={(e) => onFilterChange({ ...filters, status: e.target.value as TripStatus | '' })}
+            onChange={(e) => onFilterChange({ ...filters, status: (e.target.value as TripStatus) || undefined })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {statusOptions.map((option) => (
@@ -51,9 +50,8 @@ export default function TripFilters({ filters, onFilterChange }: TripFiltersProp
           <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
           <input
             type="date"
-            value={filters.startDate || new Date().toISOString().split('T')[0]}
-            onChange={(e) => onFilterChange({ ...filters, startDate: e.target.value })}
-            min={new Date().toISOString().split('T')[0]}
+            value={filters.startDate || ''}
+            onChange={(e) => onFilterChange({ ...filters, startDate: e.target.value || undefined })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -64,8 +62,7 @@ export default function TripFilters({ filters, onFilterChange }: TripFiltersProp
           <input
             type="date"
             value={filters.endDate || ''}
-            onChange={(e) => onFilterChange({ ...filters, endDate: e.target.value })}
-            min={filters.startDate || new Date().toISOString().split('T')[0]}
+            onChange={(e) => onFilterChange({ ...filters, endDate: e.target.value || undefined })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -75,7 +72,7 @@ export default function TripFilters({ filters, onFilterChange }: TripFiltersProp
       {(filters.search || filters.status || filters.startDate || filters.endDate) && (
         <div className="mt-3 flex justify-end">
           <button
-            onClick={() => onFilterChange({ search: '', status: '', startDate: '', endDate: '' })}
+            onClick={() => onFilterChange({})}
             className="text-sm text-blue-600 hover:text-blue-800"
           >
             Clear all filters

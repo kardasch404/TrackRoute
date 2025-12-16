@@ -8,6 +8,7 @@ import authRoutes from './modules/auth/auth.routes';
 import truckRoutes from './modules/trucks/truck.routes';
 import trailerRoutes from './modules/trailers/trailer.routes';
 import tripRoutes from './modules/trips/trip.routes';
+import dashboardRoutes from './modules/dashboard/dashboard.routes';
 
 export class App {
   public app: Application;
@@ -38,6 +39,7 @@ export class App {
     this.app.use('/api/trucks', truckRoutes);
     this.app.use('/api/trailers', trailerRoutes);
     this.app.use('/api/trips', tripRoutes);
+    this.app.use('/api/dashboard', dashboardRoutes);
   }
 
   private initializeErrorHandling(): void {

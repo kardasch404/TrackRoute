@@ -23,6 +23,9 @@ router.post('/login', validate(loginSchema), authController.login);
 router.post('/logout', authenticate, authController.logout);
 router.post('/refresh', validate(refreshTokenSchema), authController.refreshToken);
 
+// Protected routes
+router.get('/me', authenticate, authController.getMe);
+
 // Admin routes - driver management
 router.get('/admin/drivers', authenticate, adminController.getAllDrivers);
 router.get('/admin/pending-drivers', authenticate, adminController.getPendingDrivers);

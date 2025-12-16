@@ -1,38 +1,26 @@
-export type TripStatus = 'DRAFT' | 'PENDING' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-
-export interface TripLocation {
-  address: string;
-  city: string;
-  country: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-}
+export type TripStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
 
 export interface Trip {
   _id: string;
-  tripNumber: string;
-  origin: TripLocation;
-  destination: TripLocation;
+  code: string;
+  origin: string;
+  destination: string;
   distance: number; // in km
-  estimatedDuration: number; // in hours
-  cargo: {
-    description: string;
-    weight: number; // in kg
-    type: string;
-  };
-  driver?: {
+  startKm: number;
+  endKm?: number;
+  fuelConsumed?: number;
+  driver: {
     _id: string;
     firstName: string;
     lastName: string;
     email: string;
   };
-  truck?: {
+  truck: {
     _id: string;
     registration: string;
     brand: string;
     model: string;
+    currentKm: number;
   };
   trailer?: {
     _id: string;
@@ -40,10 +28,8 @@ export interface Trip {
     type: string;
   };
   status: TripStatus;
-  scheduledDate: string;
-  startDate?: string;
-  endDate?: string;
-  notes?: string;
+  startedAt?: string;
+  completedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -58,29 +44,19 @@ export interface TripFilters {
 
 // Form Types for Multi-step creation
 export interface RouteDetails {
-  origin: TripLocation;
-  destination: TripLocation;
+  origin: string;
+  destination: string;
   distance: number;
-  estimatedDuration: number;
-  scheduledDate: string;
-}
-
-export interface CargoDetails {
-  description: string;
-  weight: number;
-  type: string;
-  notes?: string;
 }
 
 export interface AssignmentDetails {
-  driverId?: string;
-  truckId?: string;
+  driverId: string;
+  truckId: string;
   trailerId?: string;
 }
 
 export interface CreateTripFormData {
   route: RouteDetails;
-  cargo: CargoDetails;
   assignment: AssignmentDetails;
 }
 

@@ -90,7 +90,8 @@ export class TripController {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
       }
 
-      const trip = await this.tripService.updateStatus(req.params.id, req.body.status, currentUserId);
+      const { status, endKm, fuelConsumed } = req.body;
+      const trip = await this.tripService.updateStatus(req.params.id, status, currentUserId, { endKm, fuelConsumed });
       res.json({ success: true, data: trip });
     } catch (error) {
       next(error);
@@ -111,6 +112,33 @@ export class TripController {
       const { fuelPricePerLiter } = req.body;
       const cost = await this.tripService.calculateTripCost(req.params.id, fuelPricePerLiter);
       res.json({ success: true, data: { cost } });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAvailableDrivers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const drivers = await this.tripService.getAvailableDrivers();
+      res.json({ success: true, data: drivers });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAvailableTrucks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const trucks = await this.tripService.getAvailableTrucks();
+      res.json({ success: true, data: trucks });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAvailableTrailers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const trailers = await this.tripService.getAvailableTrailers();
+      res.json({ success: true, data: trailers });
     } catch (error) {
       next(error);
     }

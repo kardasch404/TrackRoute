@@ -15,6 +15,8 @@ import TrailersPage from '../pages/admin/TrailersPage';
 import DriversPage from '../pages/admin/DriversPage';
 import TripsPage from '../pages/admin/TripsPage';
 import DriverDashboardPage from '../pages/driver/DriverDashboardPage';
+import MyTripsPage from '../pages/driver/MyTripsPage';
+import ProfilePage from '../pages/driver/ProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -71,7 +73,8 @@ const router = createBrowserRouter([
         ),
         children: [
           { path: 'dashboard', element: <DriverDashboardPage /> },
-          { path: 'my-trips', element: <div>My Trips</div> },
+          { path: 'my-trips', element: <MyTripsPage /> },
+          { path: 'profile', element: <ProfilePage /> },
           { path: 'trip/:id', element: <div>Trip Details</div> },
         ],
       },

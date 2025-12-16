@@ -5,12 +5,11 @@ interface TripListProps {
   trips: Trip[];
   isLoading: boolean;
   onView: (trip: Trip) => void;
-  onAssign: (trip: Trip) => void;
   onDelete?: (trip: Trip) => void;
   onStatusChange?: (trip: Trip) => void;
 }
 
-export default function TripList({ trips, isLoading, onView, onAssign, onDelete, onStatusChange }: TripListProps) {
+export default function TripList({ trips, isLoading, onView, onDelete, onStatusChange }: TripListProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -65,7 +64,6 @@ export default function TripList({ trips, isLoading, onView, onAssign, onDelete,
           key={trip._id}
           trip={trip}
           onView={onView}
-          onAssign={onAssign}
           onStatusChange={onStatusChange}
           onDelete={onDelete}
         />
