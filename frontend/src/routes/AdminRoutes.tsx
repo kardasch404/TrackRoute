@@ -1,6 +1,7 @@
 import { Route } from 'react-router-dom';
 import AdminLayout from '../components/layout/AdminLayout';
 import RoleBasedRoute from '../components/layout/RoleBasedRoute';
+import TrucksPage from '../pages/admin/TrucksPage';
 
 export default function AdminRoutes() {
   return (
@@ -13,7 +14,7 @@ export default function AdminRoutes() {
       }
     >
       <Route path="dashboard" element={<div>Admin Dashboard</div>} />
-      <Route path="trucks" element={<div>Trucks</div>} />
+      <Route path="trucks" element={<TrucksPage />} />
       <Route path="trailers" element={<div>Trailers</div>} />
       <Route path="trips" element={<div>Trips</div>} />
       <Route path="drivers" element={<div>Drivers</div>} />

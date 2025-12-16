@@ -25,3 +25,4 @@ const maintenanceRuleSchema = new Schema<IMaintenanceRuleDocument>(
 maintenanceRuleSchema.index({ maintenanceType: 1, vehicleType: 1 });
 
 export const MaintenanceRuleModel = mongoose.model<IMaintenanceRuleDocument>('MaintenanceRule', maintenanceRuleSchema);
+

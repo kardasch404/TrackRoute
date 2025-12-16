@@ -8,6 +8,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 import DriverLayout from '../components/layout/DriverLayout';
 import RoleBasedRoute from '../components/layout/RoleBasedRoute';
 import DashboardPage from '../pages/admin/DashboardPage';
+import TrucksPage from '../pages/admin/TrucksPage';
 
 const router = createBrowserRouter([
   {
@@ -37,7 +38,7 @@ const router = createBrowserRouter([
         ),
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
-          { path: 'trucks', element: <div>Trucks</div> },
+          { path: 'trucks', element: <TrucksPage /> },
           { path: 'trailers', element: <div>Trailers</div> },
           { path: 'trips', element: <div>Trips</div> },
           { path: 'drivers', element: <div>Drivers</div> },

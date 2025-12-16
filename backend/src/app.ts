@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { errorHandler, notFoundHandler } from './shared/middleware/error.middleware';
 import { requestLogger } from './shared/middleware/request-logger.middleware';
 import authRoutes from './modules/auth/auth.routes';
+import truckRoutes from './modules/trucks/truck.routes';
 
 export class App {
   public app: Application;
@@ -30,8 +31,9 @@ export class App {
       res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
     });
 
-    // API v1 routes
+    // API routes
     this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/trucks', truckRoutes);
   }
 
   private initializeErrorHandling(): void {
