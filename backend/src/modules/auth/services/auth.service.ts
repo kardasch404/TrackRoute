@@ -70,6 +70,7 @@ export class AuthService implements IAuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        status: user.status,
       },
       accessToken,
       refreshToken,

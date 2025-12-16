@@ -13,5 +13,11 @@ export default function RoleBasedRoute({ children, allowedRoles }: RoleBasedRout
   if (!user) return <Navigate to="/login" replace />;
   if (!allowedRoles.includes(user.role)) return <Navigate to="/unauthorized" replace />;
   
+  // Check driver status
+  if (user.role === 'DRIVER') {
+    if (user.status === 'PENDING') return <Navigate to="/pending-approval" replace />;
+    if (user.status === 'REJECTED') return <Navigate to="/account-rejected" replace />;
+  }
+  
   return <>{children}</>;
 }

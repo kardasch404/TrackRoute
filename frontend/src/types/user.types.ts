@@ -1,10 +1,14 @@
+export type UserStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface User {
   _id: string;
+  id?: string; // API returns id instead of _id sometimes
   email: string;
   firstName: string;
   lastName: string;
   role: 'ADMIN' | 'DRIVER';
-  isActive: boolean;
+  status: UserStatus;
+  isActive?: boolean;
 }
 
 export interface AuthState {

@@ -9,11 +9,9 @@ export class AuthController {
 
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (req.user?.role !== UserRole.ADMIN) {
-        return next(new ForbiddenException('Only admins can create users'));
-      }
+      // Public registration for drivers - they will be pending approval
       const result = await this.authService.register(req.body);
-      res.status(201).json({ success: true, message: 'User created successfully', data: result });
+      res.status(201).json({ success: true, message: 'Registration successful. Please wait for admin approval.', data: result });
     } catch (error) {
       next(error);
     }

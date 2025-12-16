@@ -23,9 +23,11 @@ router.post('/login', validate(loginSchema), authController.login);
 router.post('/logout', authenticate, authController.logout);
 router.post('/refresh', validate(refreshTokenSchema), authController.refreshToken);
 
-// Admin routes - driver approval
+// Admin routes - driver management
+router.get('/admin/drivers', authenticate, adminController.getAllDrivers);
 router.get('/admin/pending-drivers', authenticate, adminController.getPendingDrivers);
 router.put('/admin/approve-driver/:userId', authenticate, adminController.approveDriver);
 router.put('/admin/reject-driver/:userId', authenticate, adminController.rejectDriver);
+router.patch('/admin/driver/:userId/status', authenticate, adminController.updateDriverStatus);
 
 export default router;

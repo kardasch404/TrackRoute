@@ -17,6 +17,7 @@ export default function Sidebar({ role }: SidebarProps) {
   ];
 
   const driverLinks = [
+    { to: '/driver/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/driver/my-trips', icon: MapPin, label: 'My Trips' },
   ];
 

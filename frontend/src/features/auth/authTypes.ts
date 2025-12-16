@@ -5,9 +5,16 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  token: string;
+export interface LoginResponseData {
   user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: LoginResponseData;
 }
 
 export interface RegisterRequest {
