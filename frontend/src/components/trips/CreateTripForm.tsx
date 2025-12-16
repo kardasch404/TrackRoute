@@ -265,11 +265,14 @@ function CargoDetailsStep() {
 // Step 3: Assignment
 function AssignmentStep() {
   const { state, dispatch } = useTripCreation();
-  const { assignment } = state;
+  const { assignment, errors } = state;
 
   const { data: drivers, isLoading: loadingDrivers } = useAvailableDrivers();
   const { data: trucks, isLoading: loadingTrucks } = useAvailableTrucks();
   const { data: trailers, isLoading: loadingTrailers } = useAvailableTrailers();
+
+  // Find selected truck to show currentKm
+  const selectedTruck = trucks?.find((t: { _id: string }) => t._id === assignment.truckId);
 
   const updateAssignment = (field: string, value: string) => {
     dispatch({ type: 'UPDATE_ASSIGNMENT', payload: { [field]: value || undefined } });
@@ -278,46 +281,53 @@ function AssignmentStep() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Assignment (Optional)</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Assignment</h3>
         <p className="text-sm text-gray-500 mb-4">
-          You can assign a driver, truck, and trailer now or do it later.
+          Assign a driver and truck to this trip. Trailer is optional.
         </p>
         
         <div className="grid grid-cols-1 gap-4">
           {/* Driver Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Driver</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Driver *</label>
             <select
               value={assignment.driverId || ''}
               onChange={(e) => updateAssignment('driverId', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className={`w-full px-3 py-2 border rounded-md ${errors['driverId'] ? 'border-red-500' : 'border-gray-300'}`}
               disabled={loadingDrivers}
             >
-              <option value="">Select driver (optional)</option>
+              <option value="">Select driver</option>
               {drivers?.map((driver: { _id: string; firstName: string; lastName: string; email: string }) => (
                 <option key={driver._id} value={driver._id}>
                   {driver.firstName} {driver.lastName} - {driver.email}
                 </option>
               ))}
             </select>
+            {errors['driverId'] && <p className="text-red-500 text-sm mt-1">{errors['driverId']}</p>}
           </div>
 
           {/* Truck Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Truck</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Truck *</label>
             <select
               value={assignment.truckId || ''}
               onChange={(e) => updateAssignment('truckId', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className={`w-full px-3 py-2 border rounded-md ${errors['truckId'] ? 'border-red-500' : 'border-gray-300'}`}
               disabled={loadingTrucks}
             >
-              <option value="">Select truck (optional)</option>
-              {trucks?.map((truck: { _id: string; registration: string; brand: string; model: string }) => (
+              <option value="">Select truck</option>
+              {trucks?.map((truck: { _id: string; registration: string; brand: string; model: string; currentKm?: number }) => (
                 <option key={truck._id} value={truck._id}>
-                  {truck.registration} - {truck.brand} {truck.model}
+                  {truck.registration} - {truck.brand} {truck.model} ({truck.currentKm?.toLocaleString() || 0} km)
                 </option>
               ))}
             </select>
+            {errors['truckId'] && <p className="text-red-500 text-sm mt-1">{errors['truckId']}</p>}
+            {selectedTruck && (
+              <p className="text-sm text-gray-500 mt-1">
+                Current odometer: <span className="font-medium">{selectedTruck.currentKm?.toLocaleString() || 0} km</span>
+              </p>
+            )}
           </div>
 
           {/* Trailer Selection */}
@@ -344,8 +354,7 @@ function AssignmentStep() {
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="font-medium text-blue-800 mb-2">Note</h4>
         <p className="text-sm text-blue-700">
-          If you assign a driver, truck, and trailer, the trip status will be set to "Assigned".
-          Otherwise, it will remain "Pending" until assignment.
+          Driver and truck are required to create a trip. The trip will start with the truck's current odometer reading.
         </p>
       </div>
     </div>
@@ -356,6 +365,7 @@ function AssignmentStep() {
 function CreateTripFormContent({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
   const { state, dispatch, getFormData, validateStep } = useTripCreation();
   const { createTrip } = useTripMutations();
+  const { data: trucks } = useAvailableTrucks();
 
   const handleNext = () => {
     if (validateStep(state.currentStep)) {
@@ -373,7 +383,13 @@ function CreateTripFormContent({ onClose, onSuccess }: { onClose: () => void; on
     dispatch({ type: 'SET_SUBMITTING', payload: true });
     
     try {
-      await createTrip.mutateAsync(getFormData());
+      const formData = getFormData();
+      
+      // Get the selected truck's currentKm
+      const selectedTruck = trucks?.find((t: { _id: string; currentKm?: number }) => t._id === formData.assignment.truckId);
+      const startKm = selectedTruck?.currentKm || 0;
+      
+      await createTrip.mutateAsync({ ...formData, startKm });
       dispatch({ type: 'RESET_FORM' });
       onSuccess();
       onClose();

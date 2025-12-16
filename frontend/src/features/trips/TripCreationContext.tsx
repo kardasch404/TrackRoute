@@ -119,7 +119,11 @@ export function TripCreationProvider({ children }: { children: ReactNode }) {
       if (!state.cargo.type) errors['type'] = 'Cargo type is required';
     }
 
-    // Step 3 (Assignment) is optional
+    if (step === 3) {
+      // Validate Assignment - driver and truck are required
+      if (!state.assignment.driverId) errors['driverId'] = 'Driver is required';
+      if (!state.assignment.truckId) errors['truckId'] = 'Truck is required';
+    }
 
     if (Object.keys(errors).length > 0) {
       dispatch({ type: 'SET_ERRORS', payload: errors });

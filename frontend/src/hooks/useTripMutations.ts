@@ -3,28 +3,14 @@ import apiClient from '../services/apiClient';
 import type { Trip, TripStatus, CreateTripFormData } from '../features/trips/tripsTypes';
 
 interface CreateTripPayload {
-  origin: {
-    address: string;
-    city: string;
-    country: string;
-  };
-  destination: {
-    address: string;
-    city: string;
-    country: string;
-  };
+  code: string;
+  driver: string;
+  truck: string;
+  trailer?: string;
+  origin: string;
+  destination: string;
   distance: number;
-  estimatedDuration: number;
-  scheduledDate: string;
-  cargo: {
-    description: string;
-    weight: number;
-    type: string;
-  };
-  notes?: string;
-  driverId?: string;
-  truckId?: string;
-  trailerId?: string;
+  startKm: number;
 }
 
 interface AssignTripPayload {
@@ -39,26 +25,31 @@ interface UpdateStatusPayload {
   status: TripStatus;
 }
 
+// Helper function to generate a trip code
+function generateTripCode(): string {
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `TRIP-${timestamp}-${random}`;
+}
+
 export function useTripMutations() {
   const queryClient = useQueryClient();
 
   const createTrip = useMutation({
-    mutationFn: async (formData: CreateTripFormData) => {
+    mutationFn: async (formData: CreateTripFormData & { startKm: number }) => {
+      // Build origin and destination as strings
+      const originStr = `${formData.route.origin.address}, ${formData.route.origin.city}, ${formData.route.origin.country}`;
+      const destinationStr = `${formData.route.destination.address}, ${formData.route.destination.city}, ${formData.route.destination.country}`;
+      
       const payload: CreateTripPayload = {
-        origin: formData.route.origin,
-        destination: formData.route.destination,
+        code: generateTripCode(),
+        driver: formData.assignment.driverId || '',
+        truck: formData.assignment.truckId || '',
+        trailer: formData.assignment.trailerId,
+        origin: originStr,
+        destination: destinationStr,
         distance: formData.route.distance,
-        estimatedDuration: formData.route.estimatedDuration,
-        scheduledDate: formData.route.scheduledDate,
-        cargo: {
-          description: formData.cargo.description,
-          weight: formData.cargo.weight,
-          type: formData.cargo.type,
-        },
-        notes: formData.cargo.notes,
-        driverId: formData.assignment.driverId,
-        truckId: formData.assignment.truckId,
-        trailerId: formData.assignment.trailerId,
+        startKm: formData.startKm,
       };
       
       const { data } = await apiClient.post('/trips', payload);
