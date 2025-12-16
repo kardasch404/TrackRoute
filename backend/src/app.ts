@@ -6,6 +6,7 @@ import { errorHandler, notFoundHandler } from './shared/middleware/error.middlew
 import { requestLogger } from './shared/middleware/request-logger.middleware';
 import authRoutes from './modules/auth/auth.routes';
 import truckRoutes from './modules/trucks/truck.routes';
+import trailerRoutes from './modules/trailers/trailer.routes';
 
 export class App {
   public app: Application;
@@ -34,6 +35,7 @@ export class App {
     // API routes
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/trucks', truckRoutes);
+    this.app.use('/api/trailers', trailerRoutes);
   }
 
   private initializeErrorHandling(): void {

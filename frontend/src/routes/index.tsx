@@ -9,6 +9,7 @@ import DriverLayout from '../components/layout/DriverLayout';
 import RoleBasedRoute from '../components/layout/RoleBasedRoute';
 import DashboardPage from '../pages/admin/DashboardPage';
 import TrucksPage from '../pages/admin/TrucksPage';
+import TrailersPage from '../pages/admin/TrailersPage';
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'trucks', element: <TrucksPage /> },
-          { path: 'trailers', element: <div>Trailers</div> },
+          { path: 'trailers', element: <TrailersPage /> },
           { path: 'trips', element: <div>Trips</div> },
           { path: 'drivers', element: <div>Drivers</div> },
           { path: 'maintenance', element: <div>Maintenance</div> },
